@@ -1,19 +1,17 @@
+//+build ignore
+
 package main
 
+// #cgo LDFLAGS: -lresolv -led25519_dalek_rustgo -L${SRCDIR}/../target/release
+// void scalar_base_mult(void *, void *);
+import "C"
 import (
 	"bytes"
 	"encoding/hex"
 	"fmt"
 	"testing"
-	_ "unsafe"
+	"unsafe"
 )
-
-//go:cgo_import_static scalar_base_mult
-//go:linkname scalar_base_mult scalar_base_mult
-var scalar_base_mult uintptr
-var _scalar_base_mult = &scalar_base_mult
-
-func ScalarBaseMult(dst, in *[32]byte)
 
 func main() {
 	fmt.Println("Starting...")
@@ -24,7 +22,7 @@ func main() {
 	var dst, k [32]byte
 	copy(k[:], input)
 
-	ScalarBaseMult(&dst, &k)
+	C.scalar_base_mult(unsafe.Pointer(&dst), unsafe.Pointer(&k))
 	if bytes.Equal(dst[:], expected) {
 		fmt.Println("Result matches!")
 	} else {
@@ -33,7 +31,7 @@ func main() {
 
 	fmt.Printf("BenchmarkScalarBaseMult\t%v\n", testing.Benchmark(func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
-			ScalarBaseMult(&dst, &k)
+			C.scalar_base_mult(unsafe.Pointer(&dst), unsafe.Pointer(&k))
 		}
 	}))
 }
