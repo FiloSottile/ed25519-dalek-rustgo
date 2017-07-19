@@ -1,0 +1,14 @@
+[package]
+name = "ed25519-dalek-rustgo"
+version = "0.0.0"
+
+[lib]
+crate-type = ["staticlib"]
+
+[dependencies.curve25519-dalek]
+version = "^0.9"
+default-features = false
+features = ["nightly"]
+
+[profile.release]
+debug = true
