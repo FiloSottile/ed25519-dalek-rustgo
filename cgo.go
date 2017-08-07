@@ -2,7 +2,7 @@
 
 package main
 
-// #cgo LDFLAGS: -lresolv -led25519_dalek_rustgo -L${SRCDIR}/../target/release
+// #cgo LDFLAGS: -lresolv -led25519_dalek_rustgo -L${SRCDIR}/target/release
 // void scalar_base_mult(void *, void *);
 import "C"
 import (
@@ -29,7 +29,7 @@ func main() {
 		fmt.Println("Wrong result!")
 	}
 
-	fmt.Printf("BenchmarkScalarBaseMult\t%v\n", testing.Benchmark(func(b *testing.B) {
+	fmt.Printf("BenchmarkScalarBaseMult/cgo\t%v\n", testing.Benchmark(func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
 			C.scalar_base_mult(unsafe.Pointer(&dst), unsafe.Pointer(&k))
 		}
