@@ -1,8 +1,11 @@
-EXT_LD ?= clang
+IMPORT_PATH ?= github.com/FiloSottile/ed25519-dalek-rustgo
 
-edwards25519/edwards25519: edwards25519/rustgo.a target/release/libed25519_dalek_rustgo.a
-		go tool link -o $@ -buildmode exe -buildid b01dca11ab1e -linkmode external -extld "$(EXT_LD)" \
-			-v -extldflags="-lresolv -led25519_dalek_rustgo -L$(CURDIR)/target/release" edwards25519/rustgo.a
+edwards25519/edwards25519.a: edwards25519/rustgo.go edwards25519/rustgo.o target/release/libed25519_dalek_rustgo.a
+		go tool compile -N -l -o $@ -p main -pack edwards25519/rustgo.go
+		go tool pack r $@ edwards25519/rustgo.o
+		mkdir -p target/release/libed25519_dalek_rustgo && cd target/release/libed25519_dalek_rustgo && \
+			rm -f *.o && ar xv "$(CURDIR)/target/release/libed25519_dalek_rustgo.a"
+		go tool pack r $@ target/release/libed25519_dalek_rustgo/*.o
 
 target/release/libed25519_dalek_rustgo.a: src/* Cargo.toml Cargo.lock .cargo/config
 		cargo build --release
@@ -10,10 +13,11 @@ target/release/libed25519_dalek_rustgo.a: src/* Cargo.toml Cargo.lock .cargo/con
 edwards25519/rustgo.o: edwards25519/rustgo.s
 		go tool asm -I "$(shell go env GOROOT)/pkg/include" -o $@ $^
 
-edwards25519/rustgo.a: edwards25519/rustgo.go edwards25519/rustgo.o
-		go tool compile -N -l -o $@ -p main -pack edwards25519/rustgo.go
-		go tool pack r $@ edwards25519/rustgo.o
+.PHONY: install
+install: edwards25519/edwards25519.a
+		mkdir -p "$(shell go env GOPATH)/pkg/darwin_amd64/$(IMPORT_PATH)/"
+		cp edwards25519/edwards25519.a "$(shell go env GOPATH)/pkg/darwin_amd64/$(IMPORT_PATH)/"
 
 .PHONY: clean
 clean:
-		rm -rf edwards25519/edwards25519 target edwards25519/rustgo.o edwards25519/rustgo.a	
+		rm -rf edwards25519/*.[oa] target

@@ -1,4 +1,2 @@
 /target
-/edwards25519/edwards25519
-/edwards25519/rustgo.o
-/edwards25519/rustgo.a
+/edwards25519/*.[oa]
