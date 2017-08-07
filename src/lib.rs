@@ -1,5 +1,9 @@
 #![no_std]
 
+#![feature(lang_items)]
+#[lang = "eh_personality"] extern fn eh_personality() {}
+#[lang = "panic_fmt"] fn panic_fmt() -> ! { loop {} }
+
 extern crate curve25519_dalek;
 use curve25519_dalek::scalar::Scalar;
 use curve25519_dalek::constants;

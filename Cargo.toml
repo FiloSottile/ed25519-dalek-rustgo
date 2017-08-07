@@ -6,7 +6,7 @@ version = "0.0.0"
 crate-type = ["staticlib"]
 
 [dependencies.curve25519-dalek]
-version = "^0.9"
+version = "^0.10"
 default-features = false
 features = ["nightly"]
 
