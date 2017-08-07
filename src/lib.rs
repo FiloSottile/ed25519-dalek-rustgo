@@ -1,8 +1,10 @@
 #![no_std]
-
-#![feature(lang_items)]
+#![feature(lang_items, compiler_builtins_lib, core_intrinsics)]
+use core::intrinsics;
+#[allow(private_no_mangle_fns)] #[no_mangle] // rust-lang/rust#38281
+#[lang = "panic_fmt"] fn panic_fmt() -> ! { unsafe { intrinsics::abort() } }
 #[lang = "eh_personality"] extern fn eh_personality() {}
-#[lang = "panic_fmt"] fn panic_fmt() -> ! { loop {} }
+extern crate compiler_builtins; // rust-lang/rust#43264
 
 extern crate curve25519_dalek;
 use curve25519_dalek::scalar::Scalar;

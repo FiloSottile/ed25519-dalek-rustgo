@@ -13,10 +13,12 @@ target/release/libed25519_dalek_rustgo.a: src/* Cargo.toml Cargo.lock .cargo/con
 edwards25519/rustgo.o: edwards25519/rustgo.s
 		go tool asm -I "$(shell go env GOROOT)/pkg/include" -o $@ $^
 
-.PHONY: install
+.PHONY: install uninstall
 install: edwards25519/edwards25519.a
 		mkdir -p "$(shell go env GOPATH)/pkg/darwin_amd64/$(IMPORT_PATH)/"
 		cp edwards25519/edwards25519.a "$(shell go env GOPATH)/pkg/darwin_amd64/$(IMPORT_PATH)/"
+uninstall:
+		rm -f "$(shell go env GOPATH)/pkg/darwin_amd64/$(IMPORT_PATH)/edwards25519.a"
 
 .PHONY: clean
 clean:
