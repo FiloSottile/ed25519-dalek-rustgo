@@ -5,6 +5,9 @@ version = "0.0.0"
 [lib]
 crate-type = ["staticlib"]
 
+[dependencies]
+rlibc = "^1.0"
+
 [dependencies.curve25519-dalek]
 version = "^0.10"
 default-features = false

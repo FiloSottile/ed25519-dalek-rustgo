@@ -1,2 +1,3 @@
 /target
 /edwards25519/*.[oa]
+/ed25519-dalek-rustgo
