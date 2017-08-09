@@ -12,7 +12,8 @@ else
 		ld -r -o $@ --gc-sections -u "$(SYMBOL)" $^
 endif
 
-target/release/libed25519_dalek_rustgo.a: src/* Cargo.toml Cargo.lock .cargo/config
+export RUSTFLAGS ?= -Ctarget-cpu=native
+target/release/libed25519_dalek_rustgo.a: src/* Cargo.toml Cargo.lock
 		cargo build --release
 
 edwards25519/rustgo.o: edwards25519/rustgo.s
