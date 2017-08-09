@@ -1,11 +1,16 @@
 IMPORT_PATH ?= github.com/FiloSottile/ed25519-dalek-rustgo
 
-edwards25519/edwards25519.a: edwards25519/rustgo.go edwards25519/rustgo.o target/release/libed25519_dalek_rustgo.a
+edwards25519/edwards25519.a: edwards25519/rustgo.go edwards25519/rustgo.o edwards25519/libed25519_dalek_rustgo.o
 		go tool compile -N -l -o $@ -p main -pack edwards25519/rustgo.go
-		go tool pack r $@ edwards25519/rustgo.o
-		mkdir -p target/release/libed25519_dalek_rustgo && rm -f target/release/libed25519_dalek_rustgo/*.o
-		cd target/release/libed25519_dalek_rustgo && ar x "$(CURDIR)/target/release/libed25519_dalek_rustgo.a"
-		go tool pack r $@ target/release/libed25519_dalek_rustgo/*.o
+		go tool pack r $@ edwards25519/rustgo.o edwards25519/libed25519_dalek_rustgo.o
+
+SYMBOL := scalar_base_mult
+edwards25519/libed25519_dalek_rustgo.o: target/release/libed25519_dalek_rustgo.a
+ifeq ($(shell uname -s),Darwin)
+		ld -r -o $@ -arch x86_64 -u "_$(SYMBOL)" $^
+else
+		ld -r -o $@ --gc-sections -u "$(SYMBOL)" $^
+endif
 
 target/release/libed25519_dalek_rustgo.a: src/* Cargo.toml Cargo.lock .cargo/config
 		cargo build --release
