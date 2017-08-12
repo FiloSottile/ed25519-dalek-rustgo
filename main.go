@@ -17,6 +17,11 @@ func main() {
 	var dst, k [32]byte
 	copy(k[:], input)
 
+	dalek25519.ScalarBaseMult(&dst, &k)
+	if !bytes.Equal(dst[:], expected) {
+		fmt.Println("rustgo produces a wrong result!")
+	}
+
 	fmt.Printf("BenchmarkScalarBaseMult/Go\t%v\n", testing.Benchmark(func(b *testing.B) {
 		h := &agl25519.ExtendedGroupElement{}
 		for i := 0; i < b.N; i++ {
@@ -24,11 +29,6 @@ func main() {
 			h.ToBytes(&dst)
 		}
 	}))
-
-	dalek25519.ScalarBaseMult(&dst, &k)
-	if !bytes.Equal(dst[:], expected) {
-		fmt.Println("rustgo produces a wrong result!")
-	}
 
 	fmt.Printf("BenchmarkScalarBaseMult/rustgo\t%v\n", testing.Benchmark(func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
