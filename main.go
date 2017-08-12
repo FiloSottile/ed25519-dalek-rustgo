@@ -6,8 +6,7 @@ import (
 	"fmt"
 	"testing"
 
-	dalek25519 "github.com/FiloSottile/ed25519-dalek-rustgo/edwards25519"
-	agl25519 "github.com/agl/ed25519/edwards25519"
+	"github.com/FiloSottile/ed25519-dalek-rustgo/edwards25519"
 )
 
 func main() {
@@ -17,22 +16,14 @@ func main() {
 	var dst, k [32]byte
 	copy(k[:], input)
 
-	dalek25519.ScalarBaseMult(&dst, &k)
+	edwards25519.ScalarBaseMult(&dst, &k)
 	if !bytes.Equal(dst[:], expected) {
 		fmt.Println("rustgo produces a wrong result!")
 	}
 
-	fmt.Printf("BenchmarkScalarBaseMult/Go\t%v\n", testing.Benchmark(func(b *testing.B) {
-		h := &agl25519.ExtendedGroupElement{}
+	fmt.Printf("BenchmarkScalarBaseMult\t%v\n", testing.Benchmark(func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
-			agl25519.GeScalarMultBase(h, &k)
-			h.ToBytes(&dst)
-		}
-	}))
-
-	fmt.Printf("BenchmarkScalarBaseMult/rustgo\t%v\n", testing.Benchmark(func(b *testing.B) {
-		for i := 0; i < b.N; i++ {
-			dalek25519.ScalarBaseMult(&dst, &k)
+			edwards25519.ScalarBaseMult(&dst, &k)
 		}
 	}))
 }
