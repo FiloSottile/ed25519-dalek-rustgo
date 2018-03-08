@@ -6,9 +6,8 @@ TEXT ·ScalarBaseMult(SB), 0, $16384-16
 	ADDQ $16384, SP
 	ANDQ $~15, SP
 
-	MOVQ ·_scalar_base_mult(SB), AX
+	MOVQ scalar_base_mult(SB), AX
 	CALL AX
 
 	MOVQ BX, SP
 	RET
-
